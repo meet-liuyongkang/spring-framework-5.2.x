@@ -653,9 +653,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		// Tell the internal bean factory to use the context's class loader etc.
 		beanFactory.setBeanClassLoader(getClassLoader());
-		//给spring容器设置 标准的Bean表达式解析器
+		//给spring容器设置 标准的Bean表达式解析器，在前段页面可以通过表达式获取spring容器的bean对象，极少用，一般使用EL表达式
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
-		//给beanFactory设置属性编辑器，用于读取property文件
+		//给beanFactory设置String与对象的转换器  xml中<property ref="userDao"> 这个就可以将userDao字符串转换为对象
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
@@ -663,7 +663,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// 例如实现了ApplicationContextAware接口的类，则在这个后置处理器中将ApplicationContext设置给这个类
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
-		//ignoreDependencyInterface方法是忽略传入的类和他的子类
+		//ignoreDependencyInterface方法是忽略传入的类和他的子类的注入
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -673,7 +673,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// BeanFactory interface not registered as resolvable type in a plain factory.
 		// MessageSource registered (and found for autowiring) as a bean.
-		//注册一些解析器
+		//依赖注入，如果你的类中依赖BeanFactory.class类，则将当前的beanFactory传给他
 		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
@@ -691,6 +691,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Register default environment beans.
+		//如果spring环境中没有这些对象，则注入spring默认的环境对象
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
