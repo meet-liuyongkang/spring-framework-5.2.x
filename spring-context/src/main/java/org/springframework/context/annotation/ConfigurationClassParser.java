@@ -167,6 +167,7 @@ class ConfigurationClassParser {
 
 
 	public void parse(Set<BeanDefinitionHolder> configCandidates) {
+		//循环传入进来的配置类的BeanDefinitionHolder
 		for (BeanDefinitionHolder holder : configCandidates) {
 			BeanDefinition bd = holder.getBeanDefinition();
 			try {
@@ -227,6 +228,7 @@ class ConfigurationClassParser {
 			return;
 		}
 
+		//检查configClass中是否有@import注解导入其他的类
 		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
 		if (existingClass != null) {
 			if (configClass.isImported()) {
@@ -248,6 +250,7 @@ class ConfigurationClassParser {
 		//处理内部类
 		SourceClass sourceClass = asSourceClass(configClass, filter);
 		do {
+			//真正开始解析
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
 		}
 		while (sourceClass != null);
@@ -275,7 +278,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @PropertySource annotations
-		//处理@PropertySource的配置类
+		//处理@PropertySource注解
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
@@ -292,7 +295,8 @@ class ConfigurationClassParser {
 		//处理@ComponentScan注解的配置类
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
-		//得到@componentScans注解
+		//这里的componentScans其实是一种数据结构，他是一个set,但是内部保存的是AnnotationAttributes，
+		//AnnotationAttributes继承了HashMap,所以可以把它看做是map，一个map保存的就是Bean的属性值，用于在创建BeanDefinition后给其赋值
 		if (!componentScans.isEmpty() &&
 				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
 			for (AnnotationAttributes componentScan : componentScans) {

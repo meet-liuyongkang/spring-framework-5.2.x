@@ -125,11 +125,11 @@ abstract class ConfigurationClassUtils {
 		}
 
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
-		//判断是否实现了@Configuration注解，并且 proxyBeanMethods这个属性是true
+		//判断是否实现了@Configuration注解，并且 proxyBeanMethods这个属性是true。如果实现了@Configuration注解，则设置属性为full
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
-		}//如果实现了@Configuration注解  或者  实现了@Component、@ComponentScan、@Import、@ImportResource或者方法上有@Bean
-		//则将这个bean设置为配置类
+		}//如果没有实现@Configuration注解，但是实现了@Component、@ComponentScan、@Import、@ImportResource或者方法上有@Bean
+		//则spring也认为这是一个配置类，并将其属性设置为lite
 		else if (config != null || isConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
