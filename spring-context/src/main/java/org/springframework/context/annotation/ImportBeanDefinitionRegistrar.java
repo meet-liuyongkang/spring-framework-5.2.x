@@ -57,6 +57,8 @@ import org.springframework.core.type.AnnotationMetadata;
  * @see Import
  * @see ImportSelector
  * @see Configuration
+ *
+ * 实现ImportBeanDefinitionRegistrar接口的话，Spring会将register传入进来，让我们自己来注册，所以我们可以修改BeanDefinition
  */
 public interface ImportBeanDefinitionRegistrar {
 

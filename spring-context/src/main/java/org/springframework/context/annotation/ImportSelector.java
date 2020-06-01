@@ -57,7 +57,12 @@ import org.springframework.lang.Nullable;
  * @see Import
  * @see ImportBeanDefinitionRegistrar
  * @see Configuration
+ *
+ * ImportSelector接口是spring提供给我们扩展spring的，只需要实现其中的selectImports方法，返回类的全命名的String数组，
+ * Spring就会自动帮我们把这些类注册为BeanDefinition，继而创建相应的bean放入Spring容器中，但是这个方法只返回字符串数组，
+ * 而注册成为BeanDefinition和Bean的过程是Spring自动完成的，所以我们不能修改这些类的BeanDefinition
  */
+
 public interface ImportSelector {
 
 	/**
