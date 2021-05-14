@@ -11,6 +11,7 @@ public class Test {
 
 		IndexDaoImpl indexDaoImpl = (IndexDaoImpl) context.getBean(IndexDaoImpl.class);
 		IndexServiceImpl indexServiceImpl = (IndexServiceImpl) context.getBean("indexServiceImpl");
+		indexDaoImpl.query("张三");
 	}
 
 }
